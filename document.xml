@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:pPr><w:pStyle w:val="code"/></w:pPr><w:r><w:t><![CDATA[classdef app2 < matlab.apps.AppBase
+
+    % Properties that correspond to app components
+    properties (Access = public)
+        UIFigure                        matlab.ui.Figure
+        INPUTEditField                  matlab.ui.control.EditField
+        INPUTEditFieldLabel             matlab.ui.control.Label
+        Image                           matlab.ui.control.Image
+        EE19B045AbhimenyuLabel          matlab.ui.control.Label
+        EE19B047MSuchitraLabel          matlab.ui.control.Label
+        EE3107CommunicationSystemLabel  matlab.ui.control.Label
+        ManchesterButton                matlab.ui.control.Button
+        PolarRZButton                   matlab.ui.control.Button
+        AMIButton                       matlab.ui.control.Button
+        UniRZButton                     matlab.ui.control.Button
+        PolarNRZButton                  matlab.ui.control.Button
+        UniNRZButton                    matlab.ui.control.Button
+        UIAxes                          matlab.ui.control.UIAxes
+    end
+
+    % Callbacks that handle component events
+    methods (Access = private)
+
+        % Button pushed function: UniNRZButton
+        function UniNRZButtonPushed(app, event)
+            
+            A = 1;  %---Amplitude
+            b=app.INPUTEditField.Value;%your input is a=[1,2,3,4];
+            ac=str2double(strsplit(b,','));
+            N = length(ac);   %---Bit Length of input bits
+            x=0:1:100; %---interval of bit time period
+            y = ones(1,N);
+            for k = 1:N
+                y = [y A*ac(k)*ones(1,length(x))];
+            end
+            plot(app.UIAxes,y);
+
+        end
+
+        % Button pushed function: UniRZButton
+        function UniRZButtonPushed(app, event)
+            A = 1;  %---Amplitude
+             b=app.INPUTEditField.Value;%your input is a=[1,2,3,4];
+            ac=str2double(strsplit(b,','));
+            N = length(ac);   %---Bit Length of input bits
+            x=0:1:100; %---interval of bit time period
+            z = ones(1,N);
+            for k = 1:N
+              z = [z A*ac(k)*ones(1,round(length(x)/2)) 0*ac(k)*ones(1,round(length(x)/2))];
+            end
+            
+            plot(app.UIAxes,z);
+        end
+
+        % Button pushed function: PolarNRZButton
+        function PolarNRZButtonPushed(app, event)
+         
+            A = 1;  %---Amplitude
+            b=app.INPUTEditField.Value;%your input is a=[1,2,3,4];
+            ac=str2double(strsplit(b,','));%---Bit stream
+            N = length(ac);   %---Bit Length of input bits
+            x=0:1:100; %---interval of bit time period
+            e = ones(1,N);
+            for k = 1:N
+                e = [e ((-1)^(ac(k) + 2))*A*ones(1,round(length(x)))];
+            end
+            
+       
+            
+            plot(app.UIAxes,e);
+        end
+
+        % Button pushed function: PolarRZButton
+        function PolarRZButtonPushed(app, event)
+          
+            A = 1;  %---Amplitude
+            b=app.INPUTEditField.Value;%your input is a=[1,2,3,4];
+            ac=str2double(strsplit(b,','));%---Bit stream
+            N = length(ac);   %---Bit Length of input bits
+            x=0:1:100; %---interval of bit time period
+            d = ones(1,N);
+             for k = 1:N
+                c = ones(1,round(length(x)/2));
+                b = zeros(1,round(length(x)/2));
+                p = [c b];
+                d = [d ((-1)^(ac(k)+2))*(A)*p];
+            end
+       
+            
+            plot(app.UIAxes,d);
+        end
+
+        % Button pushed function: ManchesterButton
+        function ManchesterButtonPushed(app, event)
+           
+            A = 1;  %---Amplitude
+            b=app.INPUTEditField.Value;%your input is a=[1,2,3,4];
+            ac=str2double(strsplit(b,','));%---Bit stream
+            N = length(ac);   %---Bit Length of input bits
+            x=0:1:100; %---interval of bit time period
+            f = ones(1,N);
+             for k = 1:N
+                c = ones(1,round(length(x)/2));
+                b = -1*ones(1,round(length(x)/2));
+                p = [c b];
+                f = [f ((-1)^(ac(k)+1))*A*p];
+            end
+     
+            plot(app.UIAxes,f);
+        end
+
+        % Button pushed function: AMIButton
+        function AMIButtonPushed(app, event)
+            A = 1;  %---Amplitude
+            b=app.INPUTEditField.Value;%your input is a=[1,2,3,4];
+            ac=str2double(strsplit(b,','));
+            N = length(ac);   %---Bit Length of input bits
+            x=0:1:100; %---interval of bit time period
+            g = ones(1,N);
+            i=0;
+            for k = 1:N
+                g = [g (-1)^(i)*A*ac(k)*ones(1,length(x))];
+                if ac(k)==1
+                    i=i+1;
+                end
+            end
+            plot(app.UIAxes,g);
+        end
+    end
+
+    % Component initialization
+    methods (Access = private)
+
+        % Create UIFigure and components
+        function createComponents(app)
+
+            % Create UIFigure and hide until all components are created
+            app.UIFigure = uifigure('Visible', 'off');
+            app.UIFigure.Position = [100 100 640 480];
+            app.UIFigure.Name = 'MATLAB App';
+
+            % Create UIAxes
+            app.UIAxes = uiaxes(app.UIFigure);
+            title(app.UIAxes, 'LINE CODING TECHNIQUES')
+            xlabel(app.UIAxes, 'X')
+            ylabel(app.UIAxes, 'Y')
+            zlabel(app.UIAxes, 'Z')
+            app.UIAxes.FontName = 'AvantGarde';
+            app.UIAxes.Layer = 'top';
+            app.UIAxes.XGrid = 'on';
+            app.UIAxes.YGrid = 'on';
+            app.UIAxes.FontSize = 14;
+            app.UIAxes.GridColor = [0.15 0.15 0.15];
+            app.UIAxes.Box = 'on';
+            app.UIAxes.Position = [23 113 595 256];
+
+            % Create UniNRZButton
+            app.UniNRZButton = uibutton(app.UIFigure, 'push');
+            app.UniNRZButton.ButtonPushedFcn = createCallbackFcn(app, @UniNRZButtonPushed, true);
+            app.UniNRZButton.BackgroundColor = [1 1 0];
+            app.UniNRZButton.FontColor = [0 0 1];
+            app.UniNRZButton.Position = [68 68 100 22];
+            app.UniNRZButton.Text = 'UniNRZ';
+
+            % Create PolarNRZButton
+            app.PolarNRZButton = uibutton(app.UIFigure, 'push');
+            app.PolarNRZButton.ButtonPushedFcn = createCallbackFcn(app, @PolarNRZButtonPushed, true);
+            app.PolarNRZButton.BackgroundColor = [1 1 0];
+            app.PolarNRZButton.Position = [281 68 100 22];
+            app.PolarNRZButton.Text = 'PolarNRZ';
+
+            % Create UniRZButton
+            app.UniRZButton = uibutton(app.UIFigure, 'push');
+            app.UniRZButton.ButtonPushedFcn = createCallbackFcn(app, @UniRZButtonPushed, true);
+            app.UniRZButton.BackgroundColor = [1 1 0];
+            app.UniRZButton.FontColor = [0.149 0.149 0.149];
+            app.UniRZButton.Position = [68 26 100 22];
+            app.UniRZButton.Text = 'UniRZ';
+
+            % Create AMIButton
+            app.AMIButton = uibutton(app.UIFigure, 'push');
+            app.AMIButton.ButtonPushedFcn = createCallbackFcn(app, @AMIButtonPushed, true);
+            app.AMIButton.BackgroundColor = [1 1 0];
+            app.AMIButton.Position = [496 68 100 22];
+            app.AMIButton.Text = 'AMI';
+
+            % Create PolarRZButton
+            app.PolarRZButton = uibutton(app.UIFigure, 'push');
+            app.PolarRZButton.ButtonPushedFcn = createCallbackFcn(app, @PolarRZButtonPushed, true);
+            app.PolarRZButton.BackgroundColor = [1 1 0];
+            app.PolarRZButton.Position = [281 26 100 22];
+            app.PolarRZButton.Text = 'PolarRZ';
+
+            % Create ManchesterButton
+            app.ManchesterButton = uibutton(app.UIFigure, 'push');
+            app.ManchesterButton.ButtonPushedFcn = createCallbackFcn(app, @ManchesterButtonPushed, true);
+            app.ManchesterButton.BackgroundColor = [1 1 0];
+            app.ManchesterButton.Position = [496 26 100 22];
+            app.ManchesterButton.Text = 'Manchester';
+
+            % Create EE3107CommunicationSystemLabel
+            app.EE3107CommunicationSystemLabel = uilabel(app.UIFigure);
+            app.EE3107CommunicationSystemLabel.HorizontalAlignment = 'center';
+            app.EE3107CommunicationSystemLabel.FontName = 'Arial Black';
+            app.EE3107CommunicationSystemLabel.FontSize = 20;
+            app.EE3107CommunicationSystemLabel.FontColor = [0 0.4471 0.7412];
+            app.EE3107CommunicationSystemLabel.Position = [37 434 361 34];
+            app.EE3107CommunicationSystemLabel.Text = 'EE3107-Communication System';
+
+            % Create EE19B047MSuchitraLabel
+            app.EE19B047MSuchitraLabel = uilabel(app.UIFigure);
+            app.EE19B047MSuchitraLabel.FontName = 'Bookman';
+            app.EE19B047MSuchitraLabel.FontWeight = 'bold';
+            app.EE19B047MSuchitraLabel.FontAngle = 'italic';
+            app.EE19B047MSuchitraLabel.FontColor = [1 0 0];
+            app.EE19B047MSuchitraLabel.Position = [196 403 139 22];
+            app.EE19B047MSuchitraLabel.Text = 'EE19B047 M. Suchitra )';
+
+            % Create EE19B045AbhimenyuLabel
+            app.EE19B045AbhimenyuLabel = uilabel(app.UIFigure);
+            app.EE19B045AbhimenyuLabel.FontName = 'Bookman';
+            app.EE19B045AbhimenyuLabel.FontWeight = 'bold';
+            app.EE19B045AbhimenyuLabel.FontAngle = 'italic';
+            app.EE19B045AbhimenyuLabel.FontColor = [1 0 0];
+            app.EE19B045AbhimenyuLabel.Position = [54 403 143 22];
+            app.EE19B045AbhimenyuLabel.Text = '( EE19B045 Abhimenyu,';
+
+            % Create Image
+            app.Image = uiimage(app.UIFigure);
+            app.Image.Position = [354 374 272 108];
+            app.Image.ImageSource = 'basic comm (1).png';
+
+            % Create INPUTEditFieldLabel
+            app.INPUTEditFieldLabel = uilabel(app.UIFigure);
+            app.INPUTEditFieldLabel.HorizontalAlignment = 'right';
+            app.INPUTEditFieldLabel.Position = [68 374 41 22];
+            app.INPUTEditFieldLabel.Text = 'INPUT';
+
+            % Create INPUTEditField
+            app.INPUTEditField = uieditfield(app.UIFigure, 'text');
+            app.INPUTEditField.Position = [124 374 100 22];
+
+            % Show the figure after all components are created
+            app.UIFigure.Visible = 'on';
+        end
+    end
+
+    % App creation and deletion
+    methods (Access = public)
+
+        % Construct app
+        function app = app2
+
+            % Create UIFigure and components
+            createComponents(app)
+
+            % Register the app with App Designer
+            registerApp(app, app.UIFigure)
+
+            if nargout == 0
+                clear app
+            end
+        end
+
+        % Code that executes before app deletion
+        function delete(app)
+
+            % Delete UIFigure when app is deleted
+            delete(app.UIFigure)
+        end
+    end
+end]]></w:t></w:r></w:p></w:body></w:document>
